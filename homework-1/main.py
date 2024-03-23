@@ -17,13 +17,13 @@ with conn.cursor() as cur:
     with open(customers, encoding="windows-1251") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            cur.execute(f"""INSERT INTO customers VALUES({row["customer_id"]}, {row["company_name"]}, {row["contact_name"]})""")
+            cur.execute(f"""INSERT INTO customers (customer_id, company_name, contact_name) VALUES ('{row["customer_id"]}', '{row["company_name"]}', '{row["contact_name"]}')""")
     with open(employees, encoding="windows-1251") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            cur.execute(f"""INSERT INTO employees VALUES({row["employee_id"]}, {row["first_name"]}, {row["last_name"]}, {row["title"]}, {row["birth_date"]}, {row["notes"]})""")
+            cur.execute(f"""INSERT INTO employees (employee_id, first_name, last_name, title, birth_date, notes) VALUES ({row["employee_id"]}, {row["first_name"]}, {row["last_name"]}, {row["title"]}, {row["birth_date"]}, {row["notes"]})""")
     with open(orders, encoding="windows-1251") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            cur.execute(f"""INSERT INTO orders VALUES({row["order_id"]},{row["customer_id"]}, {row["employee_id"]}, {row["order_date"]}, {row["ship_city"]})""")
+            cur.execute(f"""INSERT INTO orders (order_id, customer_id, employee_id, order_date, ship_city) VALUES ({row["order_id"]}, {row["customer_id"]}, {row["employee_id"]}, {row["order_date"]}, {row["ship_city"]})""")
     rows = cur.fetchall()
