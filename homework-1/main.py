@@ -10,20 +10,39 @@ conn = psycopg2.connect(
     password="armchair"
 )
 
-with conn.cursor() as cur:
-    customers = './north_data/customers_data.csv'
-    employees = './north_data/employees_data.csv'
-    orders = './north_data/orders_data.csv'
-    with open(customers, encoding="windows-1251") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            cur.execute(f"""INSERT INTO customers (customer_id, company_name, contact_name) VALUES ('{row["customer_id"]}', '{row["company_name"]}', '{row["contact_name"]}')""")
-    with open(employees, encoding="windows-1251") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            cur.execute(f"""INSERT INTO employees (employee_id, first_name, last_name, title, birth_date, notes) VALUES ({row["employee_id"]}, {row["first_name"]}, {row["last_name"]}, {row["title"]}, {row["birth_date"]}, {row["notes"]})""")
-    with open(orders, encoding="windows-1251") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            cur.execute(f"""INSERT INTO orders (order_id, customer_id, employee_id, order_date, ship_city) VALUES ({row["order_id"]}, {row["customer_id"]}, {row["employee_id"]}, {row["order_date"]}, {row["ship_city"]})""")
-    rows = cur.fetchall()
+cur = conn.cursor()
+
+with open('north_data/employees_data.csv', 'r') as f:
+    reader = csv.reader(f)
+    next(reader)
+    for row in reader:
+        cur.execute(
+            "INSERT INTO employees (employee_id, first_name, last_name, title, birth_date,"
+            " notes) VALUES (%s, %s, %s, %s, %s, %s)",
+            row
+        )
+
+with open('north_data/customers_data.csv', 'r') as f:
+    reader = csv.reader(f)
+    next(reader)
+    for row in reader:
+        cur.execute(
+            "INSERT INTO customers (customer_id, company_name, contact_name) "
+            "VALUES (%s, %s, %s)",
+            row
+        )
+
+with open('north_data/orders_data.csv', 'r') as f:
+    reader = csv.reader(f)
+    next(reader)
+    for row in reader:
+        cur.execute(
+            "INSERT INTO orders (order_id, customer_id, employee_id, order_date, ship_city)"
+            "VALUES (%s, %s, %s, %s, %s)",
+            row
+        )
+
+conn.commit()
+cur.close()
+conn.close()
+
